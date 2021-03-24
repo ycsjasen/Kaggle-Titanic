@@ -47,14 +47,16 @@ def survive_df(df, attribute, cont):
     Calculate total count of survivors and survival rate given an attribute existing in DataFrame and outputs
     a summary DataFrame
 
-    <b>Parameters: </b> <b>df</b> : <i>DataFrame</i>
-                        <b>attribute</b> : <i>string</i>
-                                    attribute to summarize
-                        <b>cont</b> : <i>bool, default False</i>
-                                    If True, separates attribute values into 10 equal sized bins
-    <b>Returns: </b>    <b>DataFrame</b>
-                            A DataFrame of the calculated total passengers, total amount of survivors and the rate of
-                            survival for each category/bin of the attribute
+    Parameters:
+        df : DataFrame
+        attribute : string
+                attribute to summarize
+        cont : bool, default False
+                If True, separates attribute values into 10 equal sized bins
+    Returns:
+        DataFrame
+            A DataFrame of the calculated total passengers, total amount of survivors and the rate of
+            survival for each category/bin of the attribute
     """
     if cont:
         df['Bin' + attribute] = pd.cut(df[attribute], bins=10)
