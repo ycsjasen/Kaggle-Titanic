@@ -1,13 +1,10 @@
-import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import seaborn as sns
-from sklearn import svm
 
 # Loading data
 # data_training_set = "../input/titanic/train.csv"
 # data_testing_set = "../input/titanic/test.csv"
-project_path = "C:/Users/ycsja/Desktop/Python/Kaggle projects/Kaggle_Titanic"
+project_path = "C:/Users/ycsja/Desktop/github/Kaggle_Titanic/Kaggle-Titanic"
 data_training_set = "/train.csv"
 data_testing_set = "/test.csv"
 
@@ -36,24 +33,92 @@ df_training['Age'] = df_training['Age'].fillna(age_med)
 
 # Descriptive statistics
 print(df_training.describe())
-# df_training.to_csv('train_clean.csv', index=False)
+df_training.to_csv('train_clean.csv', index=False)
 
 # Exploratory Data Analysis
 attribs = ['Age', 'SibSp', 'Parch', 'Fare', 'Pclass', 'Sex', 'Embarked']
-fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(15,10))
+
+# Quantifying survivor data
+# Helper function
+
+
+def survive_df(df, attribute, cont):
+    """
+    Calculate total count of survivors and survival rate given an attribute existing in DataFrame and outputs
+    a summary DataFrame
+
+    <b>Parameters: </b> <b>df</b> : <i>DataFrame</i>
+                        <b>attribute</b> : <i>string</i>
+                                    attribute to summarize
+                        <b>cont</b> : <i>bool, default False</i>
+                                    If True, separates attribute values into 10 equal sized bins
+    <b>Returns: </b>    <b>DataFrame</b>
+                            A DataFrame of the calculated total passengers, total amount of survivors and the rate of
+                            survival for each category/bin of the attribute
+    """
+    if cont:
+        df['Bin' + attribute] = pd.cut(df[attribute], bins=10)
+        total_count = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).count()
+        survive_count = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).sum()
+        survive_rate = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).mean()
+
+        total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
+        survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
+        survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
+
+        summary_df = pd.merge(total_count, survive_count, how='inner', on='Bin' + attribute)
+        summary_df = pd.merge(summary_df, survive_rate, how='inner', on='Bin' + attribute)
+        return summary_df
+    else:
+        total_count = df[[attribute, 'Survived']].groupby([attribute]).count()
+        survive_count = df[[attribute, 'Survived']].groupby([attribute]).sum()
+        survive_rate = df[[attribute, 'Survived']].groupby([attribute]).mean()
+
+        total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
+        survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
+        survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
+
+        summary_df = pd.merge(total_count, survive_count, how='inner', on=attribute)
+        summary_df = pd.merge(summary_df, survive_rate, how='inner', on=attribute)
+        return summary_df
+
+
+# Displaying summary of each attribute
+# Age (continuous)
+print(survive_df(df_training, 'Age', True))
+
+# SibSp (discreet)
+print(survive_df(df_training, 'SibSp', False))
+
+# Parch (discreet)
+print(survive_df(df_training, 'Parch', False))
+
+# Fare (continuous)
+print(survive_df(df_training, 'Fare', True))
+
+# Pclass (discreet)
+print(survive_df(df_training, 'Pclass', False))
+
+# Sex (discreet)
+print(survive_df(df_training, 'Sex', False))
+
+# Embarked (discreet)
+print(survive_df(df_training, 'Embarked', False))
+
 
 # Visualizing survivor data
+fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(15, 10))
 mylist = []
 for x in range(2):
     for y in range(4):
-        mylist.append((x,y))
+        mylist.append((x, y))
 
 for i in range(len(attribs)):
-        axes[mylist[i]].hist([df_training[df_training['Survived'] == 1][attribs[i]],
-                              df_training[df_training['Survived'] == 0][attribs[i]]], stacked=True,
-                             edgecolor='black', linewidth=1.5, label=['Survived', 'Deceased'])
-        axes[mylist[i]].legend()
-        axes[mylist[i]].set_title(attribs[i])
+    axes[mylist[i]].hist([df_training[df_training['Survived'] == 1][attribs[i]],
+                          df_training[df_training['Survived'] == 0][attribs[i]]], stacked=True, edgecolor='black',
+                         linewidth=1.5, label=['Survived', 'Deceased'])
+    axes[mylist[i]].legend()
+    axes[mylist[i]].set_title(attribs[i])
 plt.tight_layout()
 plt.savefig('initial eda visual')
 plt.show()
