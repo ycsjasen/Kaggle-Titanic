@@ -35,6 +35,7 @@ df_training['Age'] = df_training['Age'].fillna(age_med)
 print(df_training.describe())
 df_training.to_csv('train_clean.csv', index=False)
 
+
 # Exploratory Data Analysis
 attribs = ['Age', 'SibSp', 'Parch', 'Fare', 'Pclass', 'Sex', 'Embarked']
 
@@ -59,30 +60,21 @@ def survive_df(df, attribute, cont):
             survival for each category/bin of the attribute
     """
     if cont:
-        df['Bin' + attribute] = pd.cut(df[attribute], bins=10)
-        total_count = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).count()
-        survive_count = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).sum()
-        survive_rate = df[['Bin' + attribute, 'Survived']].groupby(['Bin' + attribute]).mean()
-
-        total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
-        survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
-        survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
-
-        summary_df = pd.merge(total_count, survive_count, how='inner', on='Bin' + attribute)
-        summary_df = pd.merge(summary_df, survive_rate, how='inner', on='Bin' + attribute)
-        return summary_df
+        df['Binned ' + attribute] = pd.cut(df[attribute], bins=10)
+        binname = 'Binned ' + attribute
     else:
-        total_count = df[[attribute, 'Survived']].groupby([attribute]).count()
-        survive_count = df[[attribute, 'Survived']].groupby([attribute]).sum()
-        survive_rate = df[[attribute, 'Survived']].groupby([attribute]).mean()
+        binname = attribute
+    total_count = df[[binname, 'Survived']].groupby([binname]).count()
+    survive_count = df[[binname, 'Survived']].groupby([binname]).sum()
+    survive_rate = df[[binname, 'Survived']].groupby([binname]).mean()
 
-        total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
-        survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
-        survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
+    total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
+    survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
+    survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
 
-        summary_df = pd.merge(total_count, survive_count, how='inner', on=attribute)
-        summary_df = pd.merge(summary_df, survive_rate, how='inner', on=attribute)
-        return summary_df
+    summary_df = pd.merge(total_count, survive_count, how='inner', on=binname)
+    summary_df = pd.merge(summary_df, survive_rate, how='inner', on=binname)
+    return summary_df
 
 
 # Displaying summary of each attribute
