@@ -1,4 +1,5 @@
 import pandas as pd
+from math import log2
 
 def survive_df(df, attribute, cont):
     """
@@ -31,3 +32,12 @@ def survive_df(df, attribute, cont):
     summary_df['Deceased count'] = summary_df['Total Passenger'] - summary_df['Survivor Count']
     summary_df['Survivor Rate'] = summary_df['Survivor Count'] / summary_df['Total Passenger']
     return summary_df
+
+
+# Calculating Entropy and information gain
+def entropy_calc(survive_count, total_count):
+    decease_count = total_count - survive_count
+    p_survive = survive_count / total_count
+    p_decease = decease_count / total_count
+    x = -(p_survive * log2(p_survive)) - (p_decease * log2(p_decease))
+    return x
