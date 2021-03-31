@@ -1,5 +1,6 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+from helper import survive_df
 
 # Loading data
 # data_training_set = "../input/titanic/train.csv"
@@ -39,45 +40,8 @@ df_training.to_csv('train_clean.csv', index=False)
 # Exploratory Data Analysis
 attribs = ['Age', 'SibSp', 'Parch', 'Fare', 'Pclass', 'Sex', 'Embarked']
 
-# Quantifying survivor data
-# Helper function
-
-
-def survive_df(df, attribute, cont):
-    """
-    Calculate total count of survivors and survival rate given an attribute existing in DataFrame and outputs
-    a summary DataFrame
-
-    Parameters:
-        df : DataFrame
-        attribute : string
-                attribute to summarize
-        cont : bool, default False
-                If True, separates attribute values into 10 equal sized bins
-    Returns:
-        DataFrame
-            A DataFrame of the calculated total passengers, total amount of survivors and the rate of
-            survival for each category/bin of the attribute
-    """
-    if cont:
-        df['Binned ' + attribute] = pd.cut(df[attribute], bins=10)
-        binname = 'Binned ' + attribute
-    else:
-        binname = attribute
-    total_count = df[[binname, 'Survived']].groupby([binname]).count()
-    survive_count = df[[binname, 'Survived']].groupby([binname]).sum()
-    survive_rate = df[[binname, 'Survived']].groupby([binname]).mean()
-
-    total_count.rename(columns={'Survived': 'Total Passenger'}, inplace=True)
-    survive_count.rename(columns={'Survived': 'Survivor Count'}, inplace=True)
-    survive_rate.rename(columns={'Survived': 'Survivor Rate'}, inplace=True)
-
-    summary_df = pd.merge(total_count, survive_count, how='inner', on=binname)
-    summary_df = pd.merge(summary_df, survive_rate, how='inner', on=binname)
-    return summary_df
-
-
-# Displaying summary of each attribute
+# Quantifying survivor data in contingency table
+# Displaying contingency table of each attribute
 # Age (continuous)
 print(survive_df(df_training, 'Age', True))
 
