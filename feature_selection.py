@@ -1,5 +1,6 @@
 import pandas as pd
-from helper import survive_df, entropy_calc
+from helper import survive_df
+from math import log2
 
 df_training = pd.read_csv('train_clean.csv')
 
@@ -10,12 +11,21 @@ df_training['Binned Fare'] = pd.cut(df_training['Fare'], bins=10)
 # Creating contingency tables
 attribs = ['Binned Age', 'SibSp', 'Parch', 'Binned Fare', 'Pclass', 'Sex', 'Embarked']
 
-# To add for loop later
+# To add for loop or recursion later
 
 # Contingency Table for Sex
 df_join = df_training[['Sex', 'Survived']].groupby(['Sex']).count()
 df_entr = pd.crosstab(df_training['Sex'], df_training['Survived'])
 print(df_entr)
+
+
+# Entropy calculation function
+def entropy_calc(survive_count, total_count):
+    decease_count = total_count - survive_count
+    p_survive = survive_count / total_count
+    p_decease = decease_count / total_count
+    x = -(p_survive * log2(p_survive)) - (p_decease * log2(p_decease))
+    return x
 
 
 # Information Gain = H(Surviving) - E(Survive, Sex)
