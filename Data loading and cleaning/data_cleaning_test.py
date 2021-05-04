@@ -1,10 +1,7 @@
 import pandas as pd
 
 # Loading data
-project_path = "C:/Users/ycsja/Desktop/github/Kaggle_Titanic/Kaggle-Titanic"
-data_testing_set = "/test.csv"
-
-df_testing = pd.read_csv(project_path + data_testing_set)
+df_testing = pd.read_csv('test.csv')
 
 # Data cleaning
 # Dropping Name, Ticket number, Passenger ID factors
@@ -27,7 +24,3 @@ df_testing['Age'] = df_testing['Age'].fillna(age_med)
 # Descriptive statistics
 print(df_testing.describe())
 df_testing.to_csv('test_clean.csv', index=False)
-
-
-
-

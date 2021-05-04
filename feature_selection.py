@@ -2,7 +2,7 @@ import pandas as pd
 from helper import survive_df
 from math import log2
 
-df_training = pd.read_csv('train_clean.csv')
+df_training = pd.read_csv('Data loading and cleaning/train_clean.csv')
 
 # Separating continuous attributes into bins
 df_training['Binned Age'] = pd.cut(df_training['Age'], bins=10)

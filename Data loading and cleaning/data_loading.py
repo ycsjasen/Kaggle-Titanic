@@ -3,10 +3,7 @@ from matplotlib import pyplot as plt
 from helper import survive_df
 
 # Loading data
-project_path = "C:/Users/ycsja/Desktop/github/Kaggle_Titanic/Kaggle-Titanic"
-data_training_set = "/train.csv"
-
-df_training = pd.read_csv(project_path + data_training_set)
+df_training = pd.read_csv('train.csv')
 
 # Data cleaning
 # Dropping Name, Ticket number, Passenger ID factors

@@ -4,13 +4,13 @@ from sklearn.preprocessing import OneHotEncoder
 from helper import ohe_fn
 
 # loading dataset and defining training and testing sets
-df_train = pd.read_csv('train_clean.csv')
-df_test = pd.read_csv('test_clean.csv')
+df_train = pd.read_csv('../Data loading and cleaning/train_clean.csv')
+df_test = pd.read_csv('../Data loading and cleaning/test_clean.csv')
 cate_var = ['Sex', 'Embarked', 'Pclass']
 cont_var = ['SibSp', 'Parch', 'Age', 'Fare']
 
 X_train = df_train[cate_var]
-y_train = df_train.Survived
+y_train = df_train['Survived']
 X_test = df_test[cate_var]
 
 # initializing encoder object
