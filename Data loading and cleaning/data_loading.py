@@ -73,3 +73,4 @@ for i in range(len(attribs)):
 plt.tight_layout()
 plt.savefig('initial eda visual')
 plt.show()
+
